@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  Tony Montana kimdir neler yapmistir
+Resources:
+  TonyMontanaSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 22-80
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+
+  TonyMontanaHost:
+    Type: AWS::EC2::Instance
+    Properties: 
+     ImageId: ami-0715c1897453cabd1
+     InstanceType: t2.micro
+     KeyName: first-key-pair
+     SecurityGroupIds: 
+       - !Ref TonyMontanaSG
+     Tags: 
+       - Key: Name 
+         Value: TonyMontana
+     UserData: 
+        Fn::Base64: |
+          #! /bin/bash
+           yum update -y 
+           yum install nginx -y 
+           cd /usr/share/nginx/html
+           rm -f index.html
+           FOLDER="https://raw.githubusercontent.com/ali-fidan/Tony_Montana/main"
+           wget $FOLDER/index.html
+           wget $FOLDER/style.css
+           wget $FOLDER/tony_montana_1.jpg
+           wget $FOLDER/tony_montana_2.jpg
+           wget $FOLDER/tony_montana_3.jpg
+           systemctl start nginx
+           systemctl enable nginx
+
+
+           
+  
+      
